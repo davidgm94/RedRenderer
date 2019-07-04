@@ -328,12 +328,5 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
-/external/volk
-/external/tinyobjloader
-/external/stb
-/external/meshoptimizer
-/external/glm
-/external/glfw
-/external/EASTL
 /shaders/bytecode/triangle.vert.spv
 /shaders/bytecode/triangle.frag.spv
