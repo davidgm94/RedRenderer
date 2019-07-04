@@ -1,8 +1,14 @@
+Remove-Item -Path "./external/glfw/" -Recurse -Force
 git clone https://github.com/glfw/glfw.git external/glfw/
+Remove-Item -Path "./external/glm/" -Recurse -Force
 git clone https://github.com/g-truc/glm external/glm/
+Remove-Item -Path "./external/meshoptimizer/" -Recurse -Force
 git clone https://github.com/zeux/meshoptimizer.git external/meshoptimizer/
+Remove-Item -Path "./external/stb/" -Recurse -Force
 git clone https://github.com/nothings/stb.git external/stb/
+Remove-Item -Path "./external/tinyobjloader/" -Recurse -Force
 git clone https://github.com/syoyo/tinyobjloader.git external/tinyobjloader/
+Remove-Item -Path "./external/volk/" -Recurse -Force
 git clone https://github.com/zeux/volk.git external/volk/
 Remove-Item -Path "./external/EASTL/" -Recurse -Force
 git clone https://github.com/electronicarts/EASTL.git external/EASTL/
