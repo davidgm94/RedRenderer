@@ -7,10 +7,10 @@ enum class RED_RENDERER_GRAPHICS_API : unsigned int
 	VULKAN = (1 << 4),
 };
 
-#define OPENGL 0
+#define OPENGL 1
 #define DIRECTX11 0
 #define DIRECTX12 0
-#define VULKAN 1
+#define VULKAN 0
 
 #if VULKAN
 
@@ -956,7 +956,7 @@ LRESULT CALLBACK win32_processMessages(HWND window, UINT message, WPARAM wParam,
 #define WIDTH 1024
 #define HEIGHT 576
 #define FRAMECOUNT 2
-#define SHADER_SOURCE_PATH L"../shaders/"
+#define SHADER_SOURCE_PATH L"../../shaders/"
 #define SHADER_SOURCE_FILE L"shaders.hlsl"
 
 #define SHADER_FULL_PATH WSTRING_CONCAT(SHADER_SOURCE_PATH, SHADER_SOURCE_FILE)
