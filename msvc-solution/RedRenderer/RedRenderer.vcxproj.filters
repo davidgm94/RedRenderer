@@ -1,0 +1,250 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="GLFW">
+      <UniqueIdentifier>{35963c10-562e-41c1-8fa3-91f5413bfb0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Volk">
+      <UniqueIdentifier>{5e2e09b8-82a2-47fc-b5d0-410d9e9ea30a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GLM">
+      <UniqueIdentifier>{1807bc97-d588-4136-b422-342c95ed2422}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{2c303d0d-c5fd-4260-a51c-9d17d47efbbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="STB">
+      <UniqueIdentifier>{dcb75216-98fd-49d9-93ee-2732838e29a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RR_MAIN">
+      <UniqueIdentifier>{d2b4f9a1-e076-4e94-86dc-e5eb9b2365d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RR_VULKAN">
+      <UniqueIdentifier>{1b67bb9f-bbfd-4906-a813-080b09dee9c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RR_COMMON">
+      <UniqueIdentifier>{2674b1a0-285a-45e7-8495-617de9ad6ece}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RR_OPENGL">
+      <UniqueIdentifier>{f50443c8-bcdd-4d17-84bb-fba26fd3db76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RR_OPENGL\glad">
+      <UniqueIdentifier>{e45df9b6-93cf-4d94-915e-e782cf4c90d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RR_D3D12">
+      <UniqueIdentifier>{e79076aa-e0d6-44fb-921d-3e951fb63d37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RR_D3D11">
+      <UniqueIdentifier>{c5be923e-a8fd-4224-bc24-0c041ffbf430}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\core\glfw.cpp">
+      <Filter>RR_COMMON</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\graphics.cpp">
+      <Filter>RR_COMMON</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\new.cpp">
+      <Filter>RR_COMMON</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\tol.cpp">
+      <Filter>RR_COMMON</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\VK\antialiasing.cpp">
+      <Filter>RR_VULKAN</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\VK\buffer.cpp">
+      <Filter>RR_VULKAN</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\VK\depth.cpp">
+      <Filter>RR_VULKAN</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\VK\descriptor.cpp">
+      <Filter>RR_VULKAN</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\VK\device.cpp">
+      <Filter>RR_VULKAN</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\VK\image.cpp">
+      <Filter>RR_VULKAN</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\VK\pipeline.cpp">
+      <Filter>RR_VULKAN</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\VK\queue.cpp">
+      <Filter>RR_VULKAN</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\VK\shader.cpp">
+      <Filter>RR_VULKAN</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\VK\surface.cpp">
+      <Filter>RR_VULKAN</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\VK\swapchain.cpp">
+      <Filter>RR_VULKAN</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\VK\texture.cpp">
+      <Filter>RR_VULKAN</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\glad\src\glad.c">
+      <Filter>RR_OPENGL\glad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\glfw\src\win32_init.c">
+      <Filter>GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\glfw\src\win32_joystick.c">
+      <Filter>GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\glfw\src\win32_monitor.c">
+      <Filter>GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\glfw\src\win32_thread.c">
+      <Filter>GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\glfw\src\win32_time.c">
+      <Filter>GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\glfw\src\win32_window.c">
+      <Filter>GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\glfw\src\window.c">
+      <Filter>GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\volk\volk.c">
+      <Filter>Volk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\glfw\src\init.c">
+      <Filter>GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\glfw\src\vulkan.c">
+      <Filter>GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\glfw\src\context.c">
+      <Filter>GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\glfw\src\input.c">
+      <Filter>GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\glfw\src\monitor.c">
+      <Filter>GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\glfw\src\egl_context.c">
+      <Filter>GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\glfw\src\wgl_context.c">
+      <Filter>GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\glfw\src\osmesa_context.c">
+      <Filter>GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\main.cpp">
+      <Filter>RR_MAIN</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\external\glm\glm\glm.hpp">
+      <Filter>GLM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\stb\stb_image.h">
+      <Filter>STB</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D12\d3dx12.h">
+      <Filter>RR_D3D12</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D12\d3d.h">
+      <Filter>RR_D3D12</Filter>
+    </ClInclude>
+    <ClInclude Include="OPENGL\opengl.h">
+      <Filter>RR_OPENGL</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11\d3d.h">
+      <Filter>RR_D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\common.h">
+      <Filter>RR_COMMON</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\glfw.h">
+      <Filter>RR_COMMON</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\glm.h">
+      <Filter>RR_COMMON</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\tol.h">
+      <Filter>RR_COMMON</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\VK\antialiasing.h">
+      <Filter>RR_VULKAN</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\VK\buffer.h">
+      <Filter>RR_VULKAN</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\VK\depth.h">
+      <Filter>RR_VULKAN</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\VK\descriptor.h">
+      <Filter>RR_VULKAN</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\VK\device.h">
+      <Filter>RR_VULKAN</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\VK\image.h">
+      <Filter>RR_VULKAN</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\VK\pipeline.h">
+      <Filter>RR_VULKAN</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\VK\queue.h">
+      <Filter>RR_VULKAN</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\VK\shader.h">
+      <Filter>RR_VULKAN</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\VK\surface.h">
+      <Filter>RR_VULKAN</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\VK\swapchain.h">
+      <Filter>RR_VULKAN</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\VK\sync.h">
+      <Filter>RR_VULKAN</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\VK\texture.h">
+      <Filter>RR_VULKAN</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\VK\vulkan.h">
+      <Filter>RR_VULKAN</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\glfw\src\win32_joystick.h">
+      <Filter>GLFW</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\glfw\src\win32_platform.h">
+      <Filter>GLFW</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\volk\volk.h">
+      <Filter>Volk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\glfw\include\GLFW\glfw3.h">
+      <Filter>GLFW</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\glfw\include\GLFW\glfw3native.h">
+      <Filter>GLFW</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\glfw\src\internal.h">
+      <Filter>GLFW</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\shaders\shaders.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\shaders\triangle.vert.glsl">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\shaders\triangle.frag.glsl">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>

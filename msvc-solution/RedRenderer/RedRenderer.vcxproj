@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{BBA29D27-DCDA-4C09-904B-D83AD10EFFA8}</ProjectGuid>
+    <RootNamespace>RedRenderer</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LibraryPath>$(VULKAN_SDK)\Lib;$(SolutionDir)lib\Debug;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>false</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)external\glad\include;$(SolutionDir)external\tinyobjloader;$(SolutionDir)external\meshoptimizer\src;$(SolutionDir)external\stb;$(SolutionDir)external\glm;$(VULKAN_SDK)\Include;$(SolutionDir)external\volk;$(SolutionDir)external\glfw\include;$(SolutionDir)external\EASTL\include;$(SolutionDir)external\EASTL\test\packages\EAAssert\include;$(SolutionDir)external\EASTL\test\packages\EABase\include\Common;$(SolutionDir)external\EASTL\test\packages\EAMain\include;$(SolutionDir)external\EASTL\test\packages\EAStdC\include;$(SolutionDir)external\EASTL\test\packages\EATest\include;$(SolutionDir)external\EASTL\test\packages\EAThread\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLFW_EXPOSE_NATIVE_WIN32;_GLFW_WIN32;VK_USE_PLATFORM_WIN32_KHR;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>EASTL.lib;opengl32.lib;d3d11.lib;dxgi.lib;dxguid.lib;D3DCompiler.lib;d3d12.lib;vulkan-1.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\core\glfw.cpp" />
+    <ClCompile Include="..\..\core\graphics.cpp" />
+    <ClCompile Include="..\..\core\main.cpp" />
+    <ClCompile Include="..\..\core\new.cpp" />
+    <ClCompile Include="..\..\core\tol.cpp" />
+    <ClCompile Include="..\..\core\VK\antialiasing.cpp" />
+    <ClCompile Include="..\..\core\VK\buffer.cpp" />
+    <ClCompile Include="..\..\core\VK\depth.cpp" />
+    <ClCompile Include="..\..\core\VK\descriptor.cpp" />
+    <ClCompile Include="..\..\core\VK\device.cpp" />
+    <ClCompile Include="..\..\core\VK\image.cpp" />
+    <ClCompile Include="..\..\core\VK\pipeline.cpp" />
+    <ClCompile Include="..\..\core\VK\queue.cpp" />
+    <ClCompile Include="..\..\core\VK\shader.cpp" />
+    <ClCompile Include="..\..\core\VK\surface.cpp" />
+    <ClCompile Include="..\..\core\VK\swapchain.cpp" />
+    <ClCompile Include="..\..\core\VK\texture.cpp" />
+    <ClCompile Include="..\..\external\glad\src\glad.c" />
+    <ClCompile Include="..\..\external\glfw\src\context.c" />
+    <ClCompile Include="..\..\external\glfw\src\egl_context.c" />
+    <ClCompile Include="..\..\external\glfw\src\init.c" />
+    <ClCompile Include="..\..\external\glfw\src\input.c" />
+    <ClCompile Include="..\..\external\glfw\src\monitor.c" />
+    <ClCompile Include="..\..\external\glfw\src\osmesa_context.c" />
+    <ClCompile Include="..\..\external\glfw\src\vulkan.c" />
+    <ClCompile Include="..\..\external\glfw\src\wgl_context.c" />
+    <ClCompile Include="..\..\external\glfw\src\win32_init.c" />
+    <ClCompile Include="..\..\external\glfw\src\win32_joystick.c" />
+    <ClCompile Include="..\..\external\glfw\src\win32_monitor.c" />
+    <ClCompile Include="..\..\external\glfw\src\win32_thread.c" />
+    <ClCompile Include="..\..\external\glfw\src\win32_time.c" />
+    <ClCompile Include="..\..\external\glfw\src\win32_window.c" />
+    <ClCompile Include="..\..\external\glfw\src\window.c" />
+    <ClCompile Include="..\..\external\volk\volk.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\core\common.h" />
+    <ClInclude Include="..\..\core\glfw.h" />
+    <ClInclude Include="..\..\core\glm.h" />
+    <ClInclude Include="..\..\core\tol.h" />
+    <ClInclude Include="..\..\core\VK\antialiasing.h" />
+    <ClInclude Include="..\..\core\VK\buffer.h" />
+    <ClInclude Include="..\..\core\VK\depth.h" />
+    <ClInclude Include="..\..\core\VK\descriptor.h" />
+    <ClInclude Include="..\..\core\VK\device.h" />
+    <ClInclude Include="..\..\core\VK\image.h" />
+    <ClInclude Include="..\..\core\VK\pipeline.h" />
+    <ClInclude Include="..\..\core\VK\queue.h" />
+    <ClInclude Include="..\..\core\VK\shader.h" />
+    <ClInclude Include="..\..\core\VK\surface.h" />
+    <ClInclude Include="..\..\core\VK\swapchain.h" />
+    <ClInclude Include="..\..\core\VK\sync.h" />
+    <ClInclude Include="..\..\core\VK\texture.h" />
+    <ClInclude Include="..\..\core\VK\vulkan.h" />
+    <ClInclude Include="..\..\external\glfw\include\GLFW\glfw3.h" />
+    <ClInclude Include="..\..\external\glfw\include\GLFW\glfw3native.h" />
+    <ClInclude Include="..\..\external\glfw\src\internal.h" />
+    <ClInclude Include="..\..\external\glfw\src\win32_joystick.h" />
+    <ClInclude Include="..\..\external\glfw\src\win32_platform.h" />
+    <ClInclude Include="..\..\external\volk\volk.h" />
+    <ClInclude Include="..\external\glm\glm\glm.hpp" />
+    <ClInclude Include="..\external\stb\stb_image.h" />
+    <ClInclude Include="D3D11\d3d.h" />
+    <ClInclude Include="D3D12\d3d.h" />
+    <ClInclude Include="D3D12\d3dx12.h" />
+    <ClInclude Include="OPENGL\opengl.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\shaders\triangle.frag.glsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(VULKAN_SDK)\Bin\glslangValidator" "%(FullPath)" -V --target-env vulkan1.1 -o $(SolutionDir)shaders/bytecode/%(Filename).spv</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">SPIR-V GLSL bytecode generation</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)shaders/bytecode/%(Filename).spv</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(FullPath);%(Filename);$(SolutionDir)</AdditionalInputs>
+      <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BuildInParallel>
+    </CustomBuild>
+    <CustomBuild Include="..\..\shaders\triangle.vert.glsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <FileType>Document</FileType>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">GLSL SPIR-V bytecode generation</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(VULKAN_SDK)\Bin\glslangValidator" "%(FullPath)" -V --target-env vulkan1.1 -o $(SolutionDir)shaders/bytecode/%(Filename).spv</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)shaders/bytecode/%(Filename).spv</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(FullPath);%(Filename);$(SolutionDir)</AdditionalInputs>
+      <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BuildInParallel>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\shaders\shaders.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
