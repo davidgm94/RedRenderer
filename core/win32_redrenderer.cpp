@@ -1,3 +1,5 @@
+#if _WIN64
+
 enum class RED_RENDERER_GRAPHICS_API : unsigned int
 {
 	NONE = 0x0,
@@ -7,10 +9,10 @@ enum class RED_RENDERER_GRAPHICS_API : unsigned int
 	VULKAN = (1 << 4),
 };
 
-#define OPENGL 1
+#define OPENGL 0
 #define DIRECTX11 0
 #define DIRECTX12 0
-#define VULKAN 0
+#define VULKAN 1
 
 #if VULKAN
 
@@ -31,6 +33,72 @@ enum class RED_RENDERER_GRAPHICS_API : unsigned int
 #include "VK/depth.h"
 #include "VK/antialiasing.h"
 #include "VK/swapchain.h"
+
+VkSurfaceKHR createSurface(VkInstance instance, HINSTANCE platformHandle, HWND platformWindow)
+{
+	VkSurfaceKHR surface = nullptr;
+	VkWin32SurfaceCreateInfoKHR surfaceCreateInfo = {};
+	surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+	surfaceCreateInfo.hinstance = platformHandle;
+	surfaceCreateInfo.hwnd = platformWindow;
+	VKCHECK(vkCreateWin32SurfaceKHR(instance, &surfaceCreateInfo, nullptr, &surface));
+
+	return surface;
+}
+#ifdef GLFW
+VkExtent2D updateSurfaceExtent(GLFWwindow* window)
+{
+	int width = 0;
+	int height = 0;
+
+	while (width == 0 || height == 0)
+	{
+		glfwGetFramebufferSize(window, &width, &height);
+		glfwWaitEvents();
+	}
+	return { u32(width), u32(height) };
+}
+#else
+VkExtent2D getCurrentSurfaceExtent(HWND window)
+{
+	RECT area = {};
+	GetClientRect(window, &area);
+
+	VkExtent2D currentSurfaceExtent = { u32(area.right), u32(area.bottom) };
+	return currentSurfaceExtent;
+}
+
+MSG PollEvents(bool32& messageQuit)
+{
+	MSG msg;
+	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+	{
+		bool32 messageQuit = msg.message == WM_QUIT;
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+		if (messageQuit)
+		{
+			break;
+		}
+	}
+
+	return msg;
+}
+
+VkExtent2D updateSurfaceExtent(HWND window)
+{
+	RECT area = {};
+	
+	while (area.bottom == 0 || area.right == 0)
+	{
+		GetClientRect(window, &area);
+		WaitMessage();
+		bool32 messageQuit = false;
+		PollEvents(messageQuit);
+	}
+	return { u32(area.right), u32(area.bottom) };
+}
+#endif
 
 #define APPLICATION_NAME "Red Renderer - A Vulkan 1.1 Renderer"
 #define WIDTH 1024
@@ -71,6 +139,7 @@ int main(int argc, const char* argv[])
 #if _WIN64
 	OutputDebugStringA("\n");
 #endif
+
 #endif
 #ifdef GLFW
 	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, APPLICATION_NAME, nullptr, nullptr);
@@ -78,6 +147,8 @@ int main(int argc, const char* argv[])
 	glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
 	// need GLFW_EXPOSE_NATIVE_WIN32 for glfwGetWin32Window()
 	VkSurfaceKHR surface = createSurface(instance, GetModuleHandle(nullptr), glfwGetWin32Window(window));
+#else
+	// TODO: create window natively
 #endif
 	VkPhysicalDevice physicalDevice = pickPhysicalDevice(instance, surface);
 	// WARNING: Possible queue family indices and queue configuration error
@@ -97,7 +168,13 @@ int main(int argc, const char* argv[])
 	SurfaceFeatures surfaceFeatures = getSurfaceFeatures(physicalDevice, surface);
 	VkSurfaceFormatKHR swapchainFormatAndColor = pickSurfaceFormat(surfaceFeatures.formats);
 	VkPresentModeKHR presentMode = pickPresentMode(surfaceFeatures.presentModes);
-	VkExtent2D swapchainExtent = getSwapchainExtent(surfaceFeatures.capabilities, window);
+	VkExtent2D currentSurfaceExtent;
+#ifdef GLFW
+	glfwGetFramebufferSize(window, (int*)& currentSurfaceExtent.width, (int*)& currentSurfaceExtent.height);
+#else
+	currentSurfaceExtent = getCurrentSurfaceExtent(window);
+#endif
+	VkExtent2D swapchainExtent = getSwapchainExtent(surfaceFeatures.capabilities, currentSurfaceExtent);
 	u32 swapchainMinImageCount = getSwapchainImageCount(surfaceFeatures.capabilities); // this function may be causing bugs
 	VkSwapchainKHR swapchain = createSwapchain(physicalDevice, swapchainExtent, swapchainMinImageCount, swapchainFormatAndColor, presentMode, device, surface);
 
@@ -138,12 +215,12 @@ int main(int argc, const char* argv[])
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
-
 		u32 imageIndex = submitQueue(device, swapchain, swapchainExtent, frameSync.currentFrame, graphicsQueue, uniformBuffers, graphicsCommandBuffers.data(), frameSync.inflightFences.data(), &frameSync.imageAcquireSemaphores[frameSync.currentFrame], &frameSync.imageReleaseSemaphores[frameSync.currentFrame]);
 		VkResult swapchainUpToDate = present(device, swapchain, frameSync.currentFrame, graphicsQueue, &imageIndex, &frameSync.imageReleaseSemaphores[frameSync.currentFrame]);
 		if (swapchainUpToDate == VK_ERROR_OUT_OF_DATE_KHR || swapchainUpToDate == VK_SUBOPTIMAL_KHR || framebufferResized)
 		{
-			recreateSwapchain(swapchain, physicalDevice, device, surface, surfaceFeatures, window, queueInfo, framebuffers, descriptorPool, graphicsCommandBuffers,
+			currentSurfaceExtent = updateSurfaceExtent(window);
+			recreateSwapchain(swapchain, physicalDevice, device, surface, surfaceFeatures, currentSurfaceExtent, queueInfo, framebuffers, descriptorPool, graphicsCommandBuffers,
 				graphicsCommandPool, graphicsQueue, graphicsPipeline, pipelineLayout, renderPass, &descriptorSetLayout, uniformBuffers, physicalDeviceDescription.memoryProperties, physicalDeviceDescription.properties, swapchainImages, imageViews, vertexShader, fragmentShader, vertexBuffer.handle, indexBuffer.handle, mesh.vertices, mesh.indices, descriptorSets, texture.view, texture.sampler, depthBuffer, msaa);
 			framebufferResized = false;
 		}
@@ -154,6 +231,35 @@ int main(int argc, const char* argv[])
 
 		updateCurrentFrame(frameSync);
 	}
+#else
+	MSG msg = {};
+	bool32 quitMessage = false;
+	while (!quitMessage)
+	{
+		msg = PollEvents(quitMessage);
+		quitMessage = msg.message == WM_QUIT;
+		if (!quitMessage)
+		{
+			u32 imageIndex = submitQueue(device, swapchain, swapchainExtent, frameSync.currentFrame, graphicsQueue, uniformBuffers, graphicsCommandBuffers.data(), frameSync.inflightFences.data(), &frameSync.imageAcquireSemaphores[frameSync.currentFrame], &frameSync.imageReleaseSemaphores[frameSync.currentFrame]);
+			VkResult swapchainUpToDate = present(device, swapchain, frameSync.currentFrame, graphicsQueue, &imageIndex, &frameSync.imageReleaseSemaphores[frameSync.currentFrame]);
+			if (swapchainUpToDate == VK_ERROR_OUT_OF_DATE_KHR || swapchainUpToDate == VK_SUBOPTIMAL_KHR || framebufferResized)
+			{
+				currentSurfaceExtent = updateSurfaceExtent(window);
+				recreateSwapchain(swapchain, physicalDevice, device, surface, surfaceFeatures, currentSurfaceExtent, queueInfo, framebuffers, descriptorPool, graphicsCommandBuffers,
+					graphicsCommandPool, graphicsQueue, graphicsPipeline, pipelineLayout, renderPass, &descriptorSetLayout, uniformBuffers, physicalDeviceDescription.memoryProperties, physicalDeviceDescription.properties, swapchainImages, imageViews, vertexShader, fragmentShader, vertexBuffer.handle, indexBuffer.handle, mesh.vertices, mesh.indices, descriptorSets, texture.view, texture.sampler, depthBuffer, msaa);
+				framebufferResized = false;
+			}
+			else
+			{
+				VKCHECK(swapchainUpToDate);
+			}
+
+			updateCurrentFrame(frameSync);
+		}
+		else
+		{
+			break;
+		}
 #endif
 
 	VKCHECK(vkDeviceWaitIdle(device));
@@ -226,6 +332,8 @@ int main(int argc, const char* argv[])
 	// Destroy window
 #ifdef GLFW
 	glfwDestroyWindow(window);
+#else
+	//TODO: destroy window!
 #endif
 }
 
@@ -1207,4 +1315,7 @@ int main(int argumentCount, char** argumentValues)
 		}
 	}
 }
+
+#endif
+
 #endif

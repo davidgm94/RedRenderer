@@ -2,66 +2,7 @@
 //#include "surface.h"
 #include "../common.h"
 #include "vulkan.h"
-#include "../glfw.h"
 #include "surface.h"
-
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-VkSurfaceKHR createSurface(VkInstance instance, void* platformHandle, void* platformWindow)
-#elif defined(VK_USE_PLATFORM_ANDROID_KHR)
-VkSurfaceKHR createSurface(VkInstance instance, ANativeWindow* window)
-#elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
-VkSurfaceKHR createSurface(VkInstance instance, wl_display* display, wl_surface* window)
-#elif defined(VK_USE_PLATFORM_XCB_KHR)
-VkSurfaceKHR createSurface(VkInstance instance, xcb_connection_t* connection, xcb_window_t window)
-#elif (defined(VK_USE_PLATFORM_IOS_MVK) || defined(VK_USE_PLATFORM_MACOS_MVK))
-VkSurfaceKHR createSurface(VkInstance instance, void* view)
-#elif defined(_DIRECT2DISPLAY)
-VkSurfaceKHR createSurface(VkInstance instance, uint32_t width, uint32_t height)
-#endif
-{
-	VkSurfaceKHR surface = nullptr;
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-	VkWin32SurfaceCreateInfoKHR surfaceCreateInfo = {};
-	surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-	surfaceCreateInfo.hinstance = (HINSTANCE)platformHandle;
-	surfaceCreateInfo.hwnd = (HWND)platformWindow;
-	VKCHECK(vkCreateWin32SurfaceKHR(instance, &surfaceCreateInfo, nullptr, &surface));
-#elif defined(VK_USE_PLATFORM_ANDROID_KHR)
-	VkAndroidSurfaceCreateInfoKHR surfaceCreateInfo = {};
-	surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR;
-	surfaceCreateInfo.window = window;
-	VKCHECK(vkCreateAndroidSurfaceKHR(instance, &surfaceCreateInfo, NULL, &surface));
-#elif defined(VK_USE_PLATFORM_IOS_MVK)
-	VkIOSSurfaceCreateInfoMVK surfaceCreateInfo = {};
-	surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK;
-	surfaceCreateInfo.pNext = NULL;
-	surfaceCreateInfo.flags = 0;
-	surfaceCreateInfo.pView = view;
-	VKCHECK(vkCreateIOSSurfaceMVK(instance, &surfaceCreateInfo, nullptr, &surface));
-#elif defined(VK_USE_PLATFORM_MACOS_MVK)
-	VkMacOSSurfaceCreateInfoMVK surfaceCreateInfo = {};
-	surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK;
-	surfaceCreateInfo.pNext = NULL;
-	surfaceCreateInfo.flags = 0;
-	surfaceCreateInfo.pView = view;
-	VKCHECK(vkCreateMacOSSurfaceMVK(instance, &surfaceCreateInfo, NULL, &surface));
-#elif defined(_DIRECT2DISPLAY)
-	createDirect2DisplaySurface(width, height);
-#elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
-	VkWaylandSurfaceCreateInfoKHR surfaceCreateInfo = {};
-	surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR;
-	surfaceCreateInfo.display = display;
-	surfaceCreateInfo.surface = window;
-	VKCHECK(vkCreateWaylandSurfaceKHR(instance, &surfaceCreateInfo, nullptr, &surface));
-#elif defined(VK_USE_PLATFORM_XCB_KHR)
-	VkXcbSurfaceCreateInfoKHR surfaceCreateInfo = {};
-	surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR;
-	surfaceCreateInfo.connection = connection;
-	surfaceCreateInfo.window = window;
-	VKCHECK(vkCreateXcbSurfaceKHR(instance, &surfaceCreateInfo, nullptr, &surface));
-#endif
-	return surface;
-}
 
 SurfaceFeatures getSurfaceFeatures(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface)
 {
@@ -117,25 +58,17 @@ VkPresentModeKHR pickPresentMode(const vector<VkPresentModeKHR>& presentModes)
 	return preferred;
 }
 
-#ifdef GLFW
-VkExtent2D getSwapchainExtent(const VkSurfaceCapabilitiesKHR& surfaceCapabilities, GLFWwindow* window)
+VkExtent2D getSwapchainExtent(const VkSurfaceCapabilitiesKHR& surfaceCapabilities, VkExtent2D& currentSurfaceExtent)
 {
 	if (surfaceCapabilities.currentExtent.width != ~0u)
 		return surfaceCapabilities.currentExtent;
 	else
 	{
-		int width = 0, height = 0;
-
-		glfwGetFramebufferSize(window, &width, &height);
-
-		VkExtent2D extent = { u32(width), u32(height) };
-
-		extent.width = max(surfaceCapabilities.minImageExtent.width, min(surfaceCapabilities.maxImageExtent.width, extent.width));
-		extent.height = max(surfaceCapabilities.minImageExtent.height, min(surfaceCapabilities.maxImageExtent.height, extent.height));
-		return extent;
+		currentSurfaceExtent.width = max(surfaceCapabilities.minImageExtent.width, min(surfaceCapabilities.maxImageExtent.width, currentSurfaceExtent.width));
+		currentSurfaceExtent.height = max(surfaceCapabilities.minImageExtent.height, min(surfaceCapabilities.maxImageExtent.height, currentSurfaceExtent.height));
+		return currentSurfaceExtent;
 	}
 }
-#endif
 
 u32 getSwapchainImageCount(const VkSurfaceCapabilitiesKHR& surfaceCapabilities)
 {

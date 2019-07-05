@@ -7,14 +7,8 @@
     <Filter Include="Volk">
       <UniqueIdentifier>{5e2e09b8-82a2-47fc-b5d0-410d9e9ea30a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GLM">
-      <UniqueIdentifier>{1807bc97-d588-4136-b422-342c95ed2422}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shaders">
       <UniqueIdentifier>{2c303d0d-c5fd-4260-a51c-9d17d47efbbb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="STB">
-      <UniqueIdentifier>{dcb75216-98fd-49d9-93ee-2732838e29a1}</UniqueIdentifier>
     </Filter>
     <Filter Include="RR_MAIN">
       <UniqueIdentifier>{d2b4f9a1-e076-4e94-86dc-e5eb9b2365d4}</UniqueIdentifier>
@@ -138,28 +132,16 @@
     <ClCompile Include="..\..\external\glfw\src\osmesa_context.c">
       <Filter>GLFW</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\core\main.cpp">
+    <ClCompile Include="..\..\core\win32_redrenderer.cpp">
+      <Filter>RR_MAIN</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\linux_redrenderer.cpp">
       <Filter>RR_MAIN</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\external\glm\glm\glm.hpp">
-      <Filter>GLM</Filter>
-    </ClInclude>
-    <ClInclude Include="..\external\stb\stb_image.h">
-      <Filter>STB</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D12\d3dx12.h">
-      <Filter>RR_D3D12</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D12\d3d.h">
-      <Filter>RR_D3D12</Filter>
-    </ClInclude>
     <ClInclude Include="OPENGL\opengl.h">
       <Filter>RR_OPENGL</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D11\d3d.h">
-      <Filter>RR_D3D11</Filter>
     </ClInclude>
     <ClInclude Include="..\..\core\common.h">
       <Filter>RR_COMMON</Filter>
@@ -232,6 +214,15 @@
     </ClInclude>
     <ClInclude Include="..\..\external\glfw\src\internal.h">
       <Filter>GLFW</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\D3D11\d3d.h">
+      <Filter>RR_D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\D3D12\d3d.h">
+      <Filter>RR_D3D12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\D3D12\d3dx12.h">
+      <Filter>RR_D3D12</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

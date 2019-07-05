@@ -98,7 +98,7 @@ void cleanupSwapChain(VkDevice device, VkSwapchainKHR swapchain, const vector<Vk
 }
 
 void recreateSwapchain(VkSwapchainKHR& swapchain, VkPhysicalDevice physicalDevice, VkDevice device,
-                       VkSurfaceKHR surface, SurfaceFeatures& surfaceFeatures, GLFWwindow* window,
+                       VkSurfaceKHR surface, SurfaceFeatures& surfaceFeatures, VkExtent2D& currentSurfaceExtent,
                        const QueueInfo& queueInfo, vector<VkFramebuffer>& framebuffers,
                        VkDescriptorPool& descriptorPool, vector<VkCommandBuffer>& commandBuffers,
                        VkCommandPool commandPool, VkQueue queue, VkPipeline& graphicsPipeline, VkPipelineLayout& pipelineLayout,
@@ -108,23 +108,15 @@ void recreateSwapchain(VkSwapchainKHR& swapchain, VkPhysicalDevice physicalDevic
                        VkShaderModule fragmentShader, VkBuffer& vertexBuffer, VkBuffer& indexBuffer,
                        const vector<Vertex>& vertices, const vector<u32>& indices,
                        vector<VkDescriptorSet>& descriptorSets, VkImageView& textureImageView, VkSampler& textureSampler, DepthBuffer& depthBuffer, MSAA& msaa)
-{
-	int width = 0, height = 0;
-	while (width == 0 || height == 0)
-	{
-		glfwGetFramebufferSize(window, &width, &height);
-		glfwWaitEvents();
-	}
-
+{	
 	VKCHECK(vkDeviceWaitIdle(device));
-
 	cleanupSwapChain(device, swapchain, framebuffers, commandPool, commandBuffers, graphicsPipeline, pipelineLayout, renderPass, imageViews, uniformBuffers, descriptorPool, depthBuffer, msaa);
 
 	// Create swapchain
 	surfaceFeatures = getSurfaceFeatures(physicalDevice, surface);
 	VkSurfaceFormatKHR swapchainFormatAndColor = pickSurfaceFormat(surfaceFeatures.formats);
 	VkPresentModeKHR presentMode = pickPresentMode(surfaceFeatures.presentModes);
-	VkExtent2D swapchainExtent = getSwapchainExtent(surfaceFeatures.capabilities, window);
+	VkExtent2D swapchainExtent = getSwapchainExtent(surfaceFeatures.capabilities, currentSurfaceExtent);
 	u32 swapchainMinImageCount = getSwapchainImageCount(surfaceFeatures.capabilities); // this function may be causing bugs
 	swapchain = createSwapchain(physicalDevice, swapchainExtent, swapchainMinImageCount, swapchainFormatAndColor, presentMode, device, surface);
 	swapchainImages.clear();

@@ -113,7 +113,7 @@ QueueFamilyIndices getQueueFamilyIndices(VkPhysicalDevice physicalDevice)
 
 QueueInfo getQueueInfo(const QueueFamilyIndices& queueFamilyIndices, const u32* queueFamilyIndexArray, u32 queueFamilyIndexArraySize)
 {
-	const bool dedicatedTransferQueue = queueFamilyIndices.graphics != queueFamilyIndices.transfer;
+	const bool32 dedicatedTransferQueue = queueFamilyIndices.graphics != queueFamilyIndices.transfer;
 	u32 l_queueFamilyIndices[2] = { queueFamilyIndices.graphics, queueFamilyIndices.transfer };
 	QueueInfo queueInfo;
 

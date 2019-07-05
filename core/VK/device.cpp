@@ -4,7 +4,7 @@
 
 #include "device.h"
 
-static inline const constexpr bool useSwapchain = true;
+static inline const constexpr bool32 useSwapchain = true;
 
 #ifdef _DEBUG
 VkBool32 defaultDebugCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, u64 object,
@@ -206,7 +206,7 @@ PhysicalDeviceDescription getPhysicalDeviceDescription(VkPhysicalDevice physical
 	return description;
 }
 
-static bool extensionSupported(const char* extension, const vector<string>& extensions)
+static bool32 extensionSupported(const char* extension, const vector<string>& extensions)
 {
 	for (const auto& ext : extensions)
 		if (strcmp(ext.c_str(), extension) == 0)
@@ -258,8 +258,8 @@ VkPhysicalDevice pickPhysicalDevice(VkInstance instance, VkSurfaceKHR surface)
 	printf("----------------------\n");
 	GPUIndex = 0;
 	u16 pickedGPU = 0;
-	bool vulkan_1_1 = false;
-	bool vulkan_1_0 = false;
+	bool32 vulkan_1_1 = false;
+	bool32 vulkan_1_0 = false;
 
 	
 	for (const VkPhysicalDeviceProperties& props : deviceProperties)

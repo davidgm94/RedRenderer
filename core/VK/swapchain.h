@@ -4,7 +4,7 @@ VkSwapchainKHR createSwapchain(VkPhysicalDevice physicalDevice, VkExtent2D image
 vector<VkImage> getSwapchainImages(VkDevice device, VkSwapchainKHR swapchain);
 vector<VkImageView> createImageViews(VkDevice device, const vector<VkImage>& swapchainImages, VkFormat swapchainImageFormat);
 void recreateSwapchain(VkSwapchainKHR& swapchain, VkPhysicalDevice physicalDevice, VkDevice device,
-	VkSurfaceKHR surface, SurfaceFeatures& surfaceFeatures, GLFWwindow* window,
+	VkSurfaceKHR surface, SurfaceFeatures& surfaceFeatures, VkExtent2D& currentSurfaceExtent,
 	const QueueInfo& queueInfo, vector<VkFramebuffer>& framebuffers,
 	VkDescriptorPool& descriptorPool, vector<VkCommandBuffer>& commandBuffers,
 	VkCommandPool commandPool, VkQueue queue, VkPipeline& graphicsPipeline, VkPipelineLayout& pipelineLayout,
