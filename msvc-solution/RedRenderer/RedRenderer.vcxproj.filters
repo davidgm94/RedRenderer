@@ -34,6 +34,9 @@
     <Filter Include="Meshoptimizer">
       <UniqueIdentifier>{7990214d-8182-4266-b48b-90cbbffd2c34}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Models">
+      <UniqueIdentifier>{ca55289d-fe86-4b17-8cf8-961e93389ff5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\core\glfw.cpp">
@@ -213,5 +216,10 @@
     <CustomBuild Include="..\..\shaders\triangle.frag.glsl">
       <Filter>Shaders</Filter>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="..\..\core\models\chalet.obj">
+      <Filter>Models</Filter>
+    </Object>
   </ItemGroup>
 </Project>
