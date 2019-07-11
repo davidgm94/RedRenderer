@@ -217,9 +217,4 @@
       <Filter>Shaders</Filter>
     </CustomBuild>
   </ItemGroup>
-  <ItemGroup>
-    <Object Include="..\..\core\models\chalet.obj">
-      <Filter>Models</Filter>
-    </Object>
-  </ItemGroup>
 </Project>
