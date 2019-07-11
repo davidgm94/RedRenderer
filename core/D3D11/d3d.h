@@ -24,7 +24,7 @@ inline void DxError(HRESULT hr, const char* function, const char* file, int line
 	comPtr->Release();													\
 	comPtr = nullptr;													\
 }
-
+/*
 HWND createWindow(HINSTANCE instance, WNDPROC windowProc, int width, int height, const char* windowTitle, void* dataPointer = nullptr)
 {
 	WNDCLASSEX windowClass = { 0 };
@@ -55,7 +55,7 @@ HWND createWindow(HINSTANCE instance, WNDPROC windowProc, int width, int height,
 
 	return myWindow;
 }
-
+*/
 struct Device
 {
 	ID3D11Device* device;

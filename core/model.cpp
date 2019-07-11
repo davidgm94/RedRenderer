@@ -1,9 +1,10 @@
 #include "common.h"
 #include "glm.h"
 
+#include "model.h"
+
 #include <meshoptimizer.h>
 #include <fast_obj.h>
-
 
 Mesh loadMesh_fast(const char* path)
 {

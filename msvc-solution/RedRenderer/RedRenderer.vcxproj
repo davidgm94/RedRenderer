@@ -51,13 +51,14 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)external\glad\include;$(SolutionDir)external\tinyobjloader;$(SolutionDir)external\meshoptimizer\src;$(SolutionDir)external\stb;$(SolutionDir)external\glm;$(VULKAN_SDK)\Include;$(SolutionDir)external\volk;$(SolutionDir)external\glfw\include;$(SolutionDir)external\EASTL\include;$(SolutionDir)external\EASTL\test\packages\EAAssert\include;$(SolutionDir)external\EASTL\test\packages\EABase\include\Common;$(SolutionDir)external\EASTL\test\packages\EAMain\include;$(SolutionDir)external\EASTL\test\packages\EAStdC\include;$(SolutionDir)external\EASTL\test\packages\EATest\include;$(SolutionDir)external\EASTL\test\packages\EAThread\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)external\meshoptimizer\tools;$(SolutionDir)external\meshoptimizer\src;$(SolutionDir)external\glad\include;$(SolutionDir)external\tinyobjloader;$(SolutionDir)external\meshoptimizer\src;$(SolutionDir)external\stb;$(SolutionDir)external\glm;$(VULKAN_SDK)\Include;$(SolutionDir)external\volk;$(SolutionDir)external\glfw\include;$(SolutionDir)external\EASTL\include;$(SolutionDir)external\EASTL\test\packages\EAAssert\include;$(SolutionDir)external\EASTL\test\packages\EABase\include\Common;$(SolutionDir)external\EASTL\test\packages\EAMain\include;$(SolutionDir)external\EASTL\test\packages\EAStdC\include;$(SolutionDir)external\EASTL\test\packages\EATest\include;$(SolutionDir)external\EASTL\test\packages\EAThread\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLFW_EXPOSE_NATIVE_WIN32;_GLFW_WIN32;VK_USE_PLATFORM_WIN32_KHR;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <AdditionalDependencies>EASTL.lib;opengl32.lib;d3d11.lib;dxgi.lib;dxguid.lib;D3DCompiler.lib;d3d12.lib;vulkan-1.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir)</AdditionalLibraryDirectories>
     </Link>
@@ -80,22 +81,10 @@
   <ItemGroup>
     <ClCompile Include="..\..\core\glfw.cpp" />
     <ClCompile Include="..\..\core\graphics.cpp" />
-    <ClCompile Include="..\..\core\linux_redrenderer.cpp" />
+    <ClCompile Include="..\..\core\otherAPIsTemp.cpp" />
     <ClCompile Include="..\..\core\win32_redrenderer.cpp" />
     <ClCompile Include="..\..\core\new.cpp" />
-    <ClCompile Include="..\..\core\tol.cpp" />
-    <ClCompile Include="..\..\core\VK\antialiasing.cpp" />
-    <ClCompile Include="..\..\core\VK\buffer.cpp" />
-    <ClCompile Include="..\..\core\VK\depth.cpp" />
-    <ClCompile Include="..\..\core\VK\descriptor.cpp" />
-    <ClCompile Include="..\..\core\VK\device.cpp" />
-    <ClCompile Include="..\..\core\VK\image.cpp" />
-    <ClCompile Include="..\..\core\VK\pipeline.cpp" />
-    <ClCompile Include="..\..\core\VK\queue.cpp" />
-    <ClCompile Include="..\..\core\VK\shader.cpp" />
-    <ClCompile Include="..\..\core\VK\surface.cpp" />
-    <ClCompile Include="..\..\core\VK\swapchain.cpp" />
-    <ClCompile Include="..\..\core\VK\texture.cpp" />
+    <ClCompile Include="..\..\core\model.cpp" />
     <ClCompile Include="..\..\external\glad\src\glad.c" />
     <ClCompile Include="..\..\external\glfw\src\context.c" />
     <ClCompile Include="..\..\external\glfw\src\egl_context.c" />
@@ -112,6 +101,21 @@
     <ClCompile Include="..\..\external\glfw\src\win32_time.c" />
     <ClCompile Include="..\..\external\glfw\src\win32_window.c" />
     <ClCompile Include="..\..\external\glfw\src\window.c" />
+    <ClCompile Include="..\..\external\meshoptimizer\src\allocator.cpp" />
+    <ClCompile Include="..\..\external\meshoptimizer\src\clusterizer.cpp" />
+    <ClCompile Include="..\..\external\meshoptimizer\src\indexcodec.cpp" />
+    <ClCompile Include="..\..\external\meshoptimizer\src\indexgenerator.cpp" />
+    <ClCompile Include="..\..\external\meshoptimizer\src\overdrawanalyzer.cpp" />
+    <ClCompile Include="..\..\external\meshoptimizer\src\overdrawoptimizer.cpp" />
+    <ClCompile Include="..\..\external\meshoptimizer\src\simplifier.cpp" />
+    <ClCompile Include="..\..\external\meshoptimizer\src\stripifier.cpp" />
+    <ClCompile Include="..\..\external\meshoptimizer\src\vcacheanalyzer.cpp" />
+    <ClCompile Include="..\..\external\meshoptimizer\src\vcacheoptimizer.cpp" />
+    <ClCompile Include="..\..\external\meshoptimizer\src\vertexcodec.cpp" />
+    <ClCompile Include="..\..\external\meshoptimizer\src\vfetchanalyzer.cpp" />
+    <ClCompile Include="..\..\external\meshoptimizer\src\vfetchoptimizer.cpp" />
+    <ClCompile Include="..\..\external\meshoptimizer\tools\gltfpack.cpp" />
+    <ClCompile Include="..\..\external\meshoptimizer\tools\meshloader.cpp" />
     <ClCompile Include="..\..\external\volk\volk.c" />
   </ItemGroup>
   <ItemGroup>
@@ -121,21 +125,9 @@
     <ClInclude Include="..\..\core\D3D12\d3dx12.h" />
     <ClInclude Include="..\..\core\glfw.h" />
     <ClInclude Include="..\..\core\glm.h" />
-    <ClInclude Include="..\..\core\tol.h" />
-    <ClInclude Include="..\..\core\VK\antialiasing.h" />
-    <ClInclude Include="..\..\core\VK\buffer.h" />
-    <ClInclude Include="..\..\core\VK\depth.h" />
-    <ClInclude Include="..\..\core\VK\descriptor.h" />
-    <ClInclude Include="..\..\core\VK\device.h" />
-    <ClInclude Include="..\..\core\VK\image.h" />
-    <ClInclude Include="..\..\core\VK\pipeline.h" />
-    <ClInclude Include="..\..\core\VK\queue.h" />
-    <ClInclude Include="..\..\core\VK\shader.h" />
-    <ClInclude Include="..\..\core\VK\surface.h" />
-    <ClInclude Include="..\..\core\VK\swapchain.h" />
-    <ClInclude Include="..\..\core\VK\sync.h" />
-    <ClInclude Include="..\..\core\VK\texture.h" />
+    <ClInclude Include="..\..\core\model.h" />
     <ClInclude Include="..\..\core\VK\vulkan.h" />
+    <ClInclude Include="..\..\core\win32.h" />
     <ClInclude Include="..\..\external\glfw\include\GLFW\glfw3.h" />
     <ClInclude Include="..\..\external\glfw\include\GLFW\glfw3native.h" />
     <ClInclude Include="..\..\external\glfw\src\internal.h" />

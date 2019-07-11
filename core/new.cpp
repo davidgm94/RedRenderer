@@ -4,9 +4,6 @@
 #include <EABase/config/eaplatform.h>
 #include <EASTL/allocator_malloc.h>
 
-
-
-
 void* __cdecl operator new[](size_t size, const char* name, int flags, unsigned debugFlags, const char* file, int line)
 {
 	return new u8[size];
@@ -19,15 +16,12 @@ namespace
 
 void* __cdecl operator new[](size_t size, size_t alignment, size_t alignmentOffset, const char* pName, int flags, unsigned debugFlags, const char* file, int line)
 {
-#if 0
-
-#if EA_PLATFORM_MICROSOFT
+#if 1
 	return _aligned_offset_malloc(size, alignment, alignmentOffset);
+#elif _WIN64
+	return dummyAllocator.allocate(size, alignment, alignmentOffset, flags);
 #else
 #error "Platform not supported"
 #endif
-
-#endif
-	return dummyAllocator.allocate(size, alignment, alignmentOffset, flags);
 }
 #endif

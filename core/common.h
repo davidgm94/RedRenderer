@@ -54,3 +54,12 @@ inline wstring stringToWString(const char* string)
 #ifndef CONTAINER_BYTES
 #define CONTAINER_BYTES(container) (sizeof(container[0]) * container.size())
 #endif
+
+enum class RED_RENDERER_GRAPHICS_API : u32
+{
+	NONE = 0x0,
+	OPENGL = (1 << 1),
+	DIRECTX_11 = (1 << 2),
+	DIRECTX_12 = (1 << 3),
+	VULKAN = (1 << 4),
+};

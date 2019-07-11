@@ -31,6 +31,9 @@
     <Filter Include="RR_D3D11">
       <UniqueIdentifier>{c5be923e-a8fd-4224-bc24-0c041ffbf430}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Meshoptimizer">
+      <UniqueIdentifier>{7990214d-8182-4266-b48b-90cbbffd2c34}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\core\glfw.cpp">
@@ -41,45 +44,6 @@
     </ClCompile>
     <ClCompile Include="..\..\core\new.cpp">
       <Filter>RR_COMMON</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\core\tol.cpp">
-      <Filter>RR_COMMON</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\core\VK\antialiasing.cpp">
-      <Filter>RR_VULKAN</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\core\VK\buffer.cpp">
-      <Filter>RR_VULKAN</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\core\VK\depth.cpp">
-      <Filter>RR_VULKAN</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\core\VK\descriptor.cpp">
-      <Filter>RR_VULKAN</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\core\VK\device.cpp">
-      <Filter>RR_VULKAN</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\core\VK\image.cpp">
-      <Filter>RR_VULKAN</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\core\VK\pipeline.cpp">
-      <Filter>RR_VULKAN</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\core\VK\queue.cpp">
-      <Filter>RR_VULKAN</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\core\VK\shader.cpp">
-      <Filter>RR_VULKAN</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\core\VK\surface.cpp">
-      <Filter>RR_VULKAN</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\core\VK\swapchain.cpp">
-      <Filter>RR_VULKAN</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\core\VK\texture.cpp">
-      <Filter>RR_VULKAN</Filter>
     </ClCompile>
     <ClCompile Include="..\..\external\glad\src\glad.c">
       <Filter>RR_OPENGL\glad</Filter>
@@ -135,8 +99,56 @@
     <ClCompile Include="..\..\core\win32_redrenderer.cpp">
       <Filter>RR_MAIN</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\core\linux_redrenderer.cpp">
+    <ClCompile Include="..\..\core\otherAPIsTemp.cpp">
       <Filter>RR_MAIN</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\meshoptimizer\src\allocator.cpp">
+      <Filter>Meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\meshoptimizer\src\clusterizer.cpp">
+      <Filter>Meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\meshoptimizer\src\indexcodec.cpp">
+      <Filter>Meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\meshoptimizer\src\indexgenerator.cpp">
+      <Filter>Meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\meshoptimizer\src\overdrawanalyzer.cpp">
+      <Filter>Meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\meshoptimizer\src\overdrawoptimizer.cpp">
+      <Filter>Meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\meshoptimizer\src\simplifier.cpp">
+      <Filter>Meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\meshoptimizer\src\stripifier.cpp">
+      <Filter>Meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\meshoptimizer\src\vcacheanalyzer.cpp">
+      <Filter>Meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\meshoptimizer\src\vcacheoptimizer.cpp">
+      <Filter>Meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\meshoptimizer\src\vertexcodec.cpp">
+      <Filter>Meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\meshoptimizer\src\vfetchanalyzer.cpp">
+      <Filter>Meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\meshoptimizer\src\vfetchoptimizer.cpp">
+      <Filter>Meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\meshoptimizer\tools\gltfpack.cpp">
+      <Filter>Meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\meshoptimizer\tools\meshloader.cpp">
+      <Filter>Meshoptimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\model.cpp">
+      <Filter>RR_COMMON</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -151,51 +163,6 @@
     </ClInclude>
     <ClInclude Include="..\..\core\glm.h">
       <Filter>RR_COMMON</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\core\tol.h">
-      <Filter>RR_COMMON</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\core\VK\antialiasing.h">
-      <Filter>RR_VULKAN</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\core\VK\buffer.h">
-      <Filter>RR_VULKAN</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\core\VK\depth.h">
-      <Filter>RR_VULKAN</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\core\VK\descriptor.h">
-      <Filter>RR_VULKAN</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\core\VK\device.h">
-      <Filter>RR_VULKAN</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\core\VK\image.h">
-      <Filter>RR_VULKAN</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\core\VK\pipeline.h">
-      <Filter>RR_VULKAN</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\core\VK\queue.h">
-      <Filter>RR_VULKAN</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\core\VK\shader.h">
-      <Filter>RR_VULKAN</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\core\VK\surface.h">
-      <Filter>RR_VULKAN</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\core\VK\swapchain.h">
-      <Filter>RR_VULKAN</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\core\VK\sync.h">
-      <Filter>RR_VULKAN</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\core\VK\texture.h">
-      <Filter>RR_VULKAN</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\core\VK\vulkan.h">
-      <Filter>RR_VULKAN</Filter>
     </ClInclude>
     <ClInclude Include="..\..\external\glfw\src\win32_joystick.h">
       <Filter>GLFW</Filter>
@@ -223,6 +190,15 @@
     </ClInclude>
     <ClInclude Include="..\..\core\D3D12\d3dx12.h">
       <Filter>RR_D3D12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\win32.h">
+      <Filter>RR_COMMON</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\model.h">
+      <Filter>RR_COMMON</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\VK\vulkan.h">
+      <Filter>RR_VULKAN</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
