@@ -80,7 +80,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\core\glfw.cpp" />
-    <ClCompile Include="..\..\core\graphics.cpp" />
     <ClCompile Include="..\..\core\otherAPIsTemp.cpp" />
     <ClCompile Include="..\..\core\win32_redrenderer.cpp" />
     <ClCompile Include="..\..\core\new.cpp" />
@@ -120,8 +119,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\core\common.h" />
-    <ClInclude Include="..\..\core\D3D11\d3d.h" />
-    <ClInclude Include="..\..\core\D3D12\d3d.h" />
+    <ClInclude Include="..\..\core\d3d.h" />
+    <ClInclude Include="..\..\core\D3D11\d3d11.h" />
+    <ClInclude Include="..\..\core\D3D12\d3d12.h" />
     <ClInclude Include="..\..\core\D3D12\d3dx12.h" />
     <ClInclude Include="..\..\core\glfw.h" />
     <ClInclude Include="..\..\core\glm.h" />
@@ -162,6 +162,17 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <FileType>Document</FileType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\shaders\box.pixel.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.1</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)shaders\bytecode\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="..\..\shaders\box.vert.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)shaders\bytecode\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

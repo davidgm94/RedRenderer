@@ -1,18 +1,19 @@
 #if _WIN64
 #include "common.h"
-#define RED_OPENGL 0
-#define RED_DIRECTX11 0
-#define RED_DIRECTX12 0
-#define RED_VULKAN 1
+enum class RenderingAPI
+{
+	VULKAN = 0x00,
+	DIRECTX12 = 0x0
+};
 
 u32 width = 1024;
 u32 height = 576;
 
-#if RED_VULKAN
 #include "win32.h"
 #include "glm.h"
 #include "model.h"
 #include "VK/vulkan.h"
+#include "D3D11/d3d11.h"
 
 VkSurfaceKHR win32_createVulkanSurface(VkInstance vulkanInstance, HINSTANCE win32_instance, HWND win32_window)
 {
@@ -28,14 +29,6 @@ VkSurfaceKHR win32_createVulkanSurface(VkInstance vulkanInstance, HINSTANCE win3
 	return win32_vulkanSurface;
 }
 
-double timestamp()
-{
-	LARGE_INTEGER freq, counter;
-	QueryPerformanceFrequency(&freq);
-	QueryPerformanceCounter(&counter);
-	return double(counter.QuadPart) / double(freq.QuadPart);
-}
-
 #define APPLICATION_NAME "Red Renderer - A Vulkan 1.1 Renderer"
 bool framebufferResized = false;
 bool dedicatedTransferQueue = false;
@@ -48,8 +41,8 @@ const string texturesDirectory = "core/textures/";
 const string vertexShaderBytecodeName = "triangle.vert.spv";
 const string fragmentShaderBytecodeName = "triangle.frag.spv";
 
-const string modelName = "chalet.obj";
-const string textureName = "chalet.jpg";
+const string modelName = "taylorswift.obj";
+const string textureName = "taylorswift.jpeg";
 
 const string vertexShaderFullPath = rootDirectory + shaderBytecodePath + vertexShaderBytecodeName;
 const string fragmentShaderFullPath = rootDirectory + shaderBytecodePath + fragmentShaderBytecodeName;
@@ -58,12 +51,14 @@ const string textureFullPath = rootDirectory + texturesDirectory + textureName;
 
 int WinMain(HINSTANCE currentInstance, HINSTANCE previousInstance, LPSTR, int)
 {
+	bool32 vulkan = true;
+	bool32 d3d11 = true;
 	u64 win32_timerFrequency = win32_getTimerFrequency();
 
 #if VOLK
 	VKCHECK(volkInitialize());
 #endif
-	Win32_AppInfo win32vk;
+	Win32_ApplicationInfo win32vk;
 	VulkanApplication vk;
 	win32vk.api = RED_RENDERER_GRAPHICS_API::VULKAN;
 	win32vk.apiConfig = &vk;
@@ -75,9 +70,12 @@ int WinMain(HINSTANCE currentInstance, HINSTANCE previousInstance, LPSTR, int)
 	VkDebugReportFlagsEXT callbackFlags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT | VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT;
 	vk.debugCallback = vulkan_createDebugCallback(vk.instance, callbackFlags, vulkan_defaultDebugCallback);
 #endif
+	// Isolate platform specific Vulkan code to facilitate future ports
+#ifdef _WIN64
 	HINSTANCE win32_instance = currentInstance;
-	win32vk.window = createWindow(win32_instance, win32_messageCallback, width, height, "Red Renderer: a Vulkan Engine", &win32vk);
+	win32vk.window = win32_createWindow(win32_instance, win32_messageCallback, width, height, "Red Renderer: a Vulkan Engine", &win32vk);
 	vk.surface = win32_createVulkanSurface(vk.instance, win32_instance, win32vk.window);
+#endif
 	vk.physicalDevice = vulkan_pickPhysicalDevice(vk.instance, vk.surface);
 	vk.deviceDescription = vulkan_getPhysicalDeviceDescription(vk.physicalDevice, vk.surface);
 	vk.device = vulkan_createDevice(vk.physicalDevice, vk.deviceDescription);
@@ -102,11 +100,11 @@ int WinMain(HINSTANCE currentInstance, HINSTANCE previousInstance, LPSTR, int)
 	vk.VS = vulkan_createShaderModule(vk.device, vertexShaderFullPath.c_str());
 	vk.FS = vulkan_createShaderModule(vk.device, fragmentShaderFullPath.c_str());
 	vk.descriptorSetLayout = vulkan_createDescriptorSetLayout(vk.device);
-	vk.pipelineLayout = vulkan_createPipelineLayout(vk.device, &vk.descriptorSetLayout);
+	vk.graphicsPipelineLayout = vulkan_createPipelineLayout(vk.device, &vk.descriptorSetLayout);
 	vk.depthStencil = vulkan_createDepthStencil(vk.device, vk.physicalDevice, vk.swapchain.extent, vk.deviceDescription.memoryProperties);
 	vk.renderPass = vulkan_createRenderPass(vk.device, vk.swapchain.surfaceFormat.format, vk.depthStencil.depthFormat, vk.msaa.samples);
 
-	vk.pipeline = vulkan_createGraphicsPipeline(vk.device, vk.VS, vk.FS, vk.swapchain.extent, vk.pipelineLayout, vk.renderPass, vk.msaa.samples);
+	vk.graphicsPipeline = vulkan_createGraphicsPipeline(vk.device, vk.VS, vk.FS, vk.swapchain.extent, vk.graphicsPipelineLayout, vk.renderPass, vk.msaa.samples);
 
 	vk.framebuffers = vulkan_createFramebuffers(vk.device, vk.swapchain.imageViews, vk.swapchain.extent, vk.renderPass, vk.depthStencil.imageView, vk.msaa.view);
 	vk.drawCommandBuffers = vulkan_createCommandBuffers(vk.device, vk.graphicsCommandPool, (u32)vk.framebuffers.size());
@@ -121,55 +119,85 @@ int WinMain(HINSTANCE currentInstance, HINSTANCE previousInstance, LPSTR, int)
 	vk.uniformBuffers = vulkan_createUniformBuffers(vk.device, vk.swapchain.images.size(), onlyOneQueue, vk.deviceDescription.memoryProperties);
 	vk.descriptorPool = vulkan_createDescriptorPool(vk.device, (u32)vk.swapchain.images.size());
 	vk.descriptorSets = vulkan_createDescriptorSets(vk.device, vk.descriptorPool, u32(vk.swapchain.images.size()), vk.descriptorSetLayout, vk.uniformBuffers, vk.texture.view, vk.texture.sampler);
-	vulkan_buildCommandBuffers(vk.renderPass, vk.swapchain.extent, vk.drawCommandBuffers, vk.framebuffers, vk.vertexBuffer.handle, vk.indexBuffer.handle, vk.pipeline, vk.pipelineLayout, vk.mesh.vertices, vk.mesh.indices, vk.descriptorSets);
+	vulkan_buildCommandBuffers(vk.renderPass, vk.swapchain.extent, vk.drawCommandBuffers, vk.framebuffers, vk.vertexBuffer.handle, vk.indexBuffer.handle, vk.graphicsPipeline, vk.graphicsPipelineLayout, vk.mesh.vertices, vk.mesh.indices, vk.descriptorSets);
 
 	vk.frameSync = vulkan_createSynchronizationResources(vk.device, MAX_FRAMES_IN_FLIGHT);
 
-	MSG msg = {};
+	// END VULKAN SETUP
+
+	// INIT DIRECTX SETUP
+
+	Win32_ApplicationInfo win32d3d11;
+	const char* d3dWindowTitle = "D3D11 Engine";
+	win32d3d11.clientArea.right = 1024;
+	win32d3d11.clientArea.bottom = 576;
+
+	win32d3d11.window = win32_createWindow(currentInstance, win32_messageCallback, win32d3d11.clientArea.right, win32d3d11.clientArea.bottom, d3dWindowTitle, &win32d3d11);
+	D3D11_Renderer renderer = initDirectX11(win32d3d11.window, win32d3d11.clientArea);
+	win32d3d11.apiConfig = &renderer;
+	RenderedScene scene = initScene();
+	win32d3d11.running = true;
+	
+
+	// END DIRECTX SETUP
+
 	win32vk.resizing = false;
-	ShowWindow(win32vk.window, SW_SHOW);
+	
 	win32vk.running = true;
 	VkResult swapchainUpToDate = VK_SUCCESS;
 	u64 startCount = win32_getTimerValue();
 
-	while (win32vk.running)
+	if (d3d11)
 	{
-		while (PeekMessage(&msg, win32vk.window, 0, 0, PM_REMOVE))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-
-		VKCHECK(vkDeviceWaitIdle(vk.device));
-
-		SwapchainStatus swapchainStatus = vulkan_updateSwapchain(&vk.swapchain, vk.device, vk.physicalDevice, vk.surface, win32vk.clientArea.right, win32vk.clientArea.bottom);
-
-		if (swapchainStatus == SwapchainStatus::NOT_READY)
-		{
-			continue;
-		}
-		if (swapchainStatus == SwapchainStatus::RESIZED)
-		{
-			vulkan_onWindowResize(&vk);
-		}
-		
-		float deltaT = win32_getDeltaT_SP(startCount, win32_timerFrequency);
-		const u32 fencesUsed = 1;
-		VKCHECK(vkWaitForFences(vk.device, fencesUsed, vk.frameSync.inflightFences.data(), true, ~0ui64));
-
-		u32 imageIndex;
-
-		VkResult imageAcquisition = (vkAcquireNextImageKHR(vk.device, vk.swapchain.handle, ULLONG_MAX, vk.frameSync.imageAcquireSemaphores[vk.frameSync.currentFrame], nullptr, &imageIndex));
-
-		vulkan_updateUniformBuffer(vk.device, vk.swapchain.extent, vk.uniformBuffers.memory[imageIndex], deltaT);
-		vulkan_submitQueue(vk.device, vk.graphicsQueue, vk.drawCommandBuffers[imageIndex], vk.frameSync.inflightFences.data(), &vk.frameSync.imageAcquireSemaphores[vk.frameSync.currentFrame], &vk.frameSync.imageReleaseSemaphores[vk.frameSync.currentFrame]);
-		VkResult swapchainUpToDate = vulkan_present(vk.device, vk.swapchain.handle, vk.frameSync.currentFrame, vk.graphicsQueue, &imageIndex, &vk.frameSync.imageReleaseSemaphores[vk.frameSync.currentFrame]);
-		vulkan_updateCurrentFrame(vk.frameSync);
+		ShowWindow(win32d3d11.window, SW_SHOW);
 	}
+	if (vulkan)
+	{
+		ShowWindow(win32vk.window, SW_SHOW);
+	}
+	do
+	{
+		float deltaT = win32_deltaT(startCount, win32_timerFrequency);
+		if (vulkan)
+		{
+			SwapchainStatus swapchainStatus = vulkan_updateSwapchain(vk.swapchain, vk.device, vk.physicalDevice, vk.surface);
 
-	VKCHECK(vkDeviceWaitIdle(vk.device));
+			if (swapchainStatus == SwapchainStatus::RESIZED)
+			{
+				vulkan_onWindowResize(&vk);
+			}
+			else if (swapchainStatus == SwapchainStatus::NOT_READY)
+			{
+				WIN32_HANDLE_MESSAGES_DEFAULT(win32vk.window);
+				continue;
+			}
+			// GPU fences
+			const u32 fencesUsed = 1;
+			VKCHECK(vkWaitForFences(vk.device, fencesUsed, vk.frameSync.inflightFences.data(), true, ~0ui64));
+			// Send info to local device
+			u32 imageIndex;
+			VKCHECK(vkAcquireNextImageKHR(vk.device, vk.swapchain.handle, ULLONG_MAX, vk.frameSync.imageAcquireSemaphores[vk.frameSync.currentFrame], nullptr, &imageIndex));
+			vulkan_updateUniformBuffer(vk.device, vk.swapchain.extent, vk.uniformBuffers.memory[imageIndex], deltaT);
 
-	vkDestroyInstance(vk.instance, nullptr);
+			// RENDER:
+			vulkan_submitQueue(vk.device, vk.graphicsQueue, vk.drawCommandBuffers[imageIndex], vk.frameSync.inflightFences.data(), &vk.frameSync.imageAcquireSemaphores[vk.frameSync.currentFrame], &vk.frameSync.imageReleaseSemaphores[vk.frameSync.currentFrame]);
+			VKCHECK(vulkan_present(vk.device, vk.swapchain.handle, vk.frameSync.currentFrame, vk.graphicsQueue, &imageIndex, &vk.frameSync.imageReleaseSemaphores[vk.frameSync.currentFrame]));
+			vulkan_updateCurrentFrame(vk.frameSync);
+
+			WIN32_HANDLE_MESSAGES_DEFAULT(win32vk.window);
+		}
+
+		if (d3d11)
+		{
+			update(scene, deltaT);
+			render(renderer, scene);
+
+			WIN32_HANDLE_MESSAGES_DEFAULT(win32d3d11.window);
+		}		
+	}
+	while (win32vk.running && win32d3d11.running);
+
+	destroyVulkanApplication(vk);
+	shutdownD3D11Renderer(renderer);
 }
-#endif
 #endif

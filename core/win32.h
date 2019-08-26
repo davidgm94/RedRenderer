@@ -3,6 +3,16 @@
 #include <Windows.h>
 #include <ShellScalingApi.h>
 
+#define WIN32_HANDLE_MESSAGES_DEFAULT(window)										\
+{																			\
+	MSG msg;																\
+	while (PeekMessage(&msg, window, 0, 0, PM_REMOVE))						\
+	{																		\
+		TranslateMessage(&msg);												\
+		DispatchMessage(&msg);												\
+	}																		\
+}
+
 void setupConsole(const char* title)
 {
 	AllocConsole();
@@ -40,7 +50,7 @@ struct Win32_WindowDimension
 	u32 width, height;
 };
 
-struct Win32_AppInfo
+struct Win32_ApplicationInfo
 {
 	HWND window;
 	bool32 resizing;
@@ -65,13 +75,13 @@ i64 win32_getTimerFrequency()
 	return performanceFrequency;
 }
 
-float win32_getDeltaT_SP(i64 initTime, i64 frequency)
+float win32_deltaT(i64 initTime, i64 frequency)
 {
 	return (float)(win32_getTimerValue() - initTime) / frequency;
 }
 
 
-HWND createWindow(HINSTANCE instance, WNDPROC windowProc, int width, int height, const char* windowTitle, void* dataPointer)
+HWND win32_createWindow(HINSTANCE instance, WNDPROC windowProc, int width, int height, const char* windowTitle, void* dataPointer)
 {
 	WNDCLASSEX windowClass = { 0 };
 	windowClass.cbWndExtra = 64;
@@ -105,7 +115,7 @@ HWND createWindow(HINSTANCE instance, WNDPROC windowProc, int width, int height,
 
 LRESULT CALLBACK win32_messageCallback(HWND window, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	Win32_AppInfo* appInfo = ((Win32_AppInfo*)GetWindowLongPtr(window, GWLP_USERDATA));
+	Win32_ApplicationInfo* appInfo = ((Win32_ApplicationInfo*)GetWindowLongPtr(window, GWLP_USERDATA));
 	switch (message)
 	{
 		case (WM_PAINT):
@@ -125,31 +135,6 @@ LRESULT CALLBACK win32_messageCallback(HWND window, UINT message, WPARAM wParam,
 		{
 			LPCREATESTRUCT pCreateStruct = (LPCREATESTRUCT)(lParam);
 			SetWindowLongPtr(window, GWLP_USERDATA, (LONG_PTR)(pCreateStruct->lpCreateParams));
-		} break;
-		case WM_SIZE:
-		{
-			if (appInfo)
-			{
-				GetClientRect(window, &appInfo->clientArea);
-				
-				WaitMessage();
-				MSG msg;
-				while (PeekMessage(&msg, window, 0, 0, PM_REMOVE))
-				{
-					TranslateMessage(&msg);
-					DispatchMessage(&msg);
-				}
-			}
-			
-
-		} break;
-		case WM_ENTERSIZEMOVE:
-		{
-			if (appInfo) appInfo->resizing = true;
-		} break;
-		case WM_EXITSIZEMOVE:
-		{
-			if (appInfo) appInfo->resizing = false;
 		} break;
 		default:
 		{

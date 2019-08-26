@@ -42,14 +42,18 @@ using std::max;
 #define STRING_CONCAT(a, b) (a "" b)
 #define WSTRING_CONCAT(a, b) (a L"" b)
 
-inline wstring stringToWString(const char* string)
+
+
+inline wstring stringToWString(const char* string, size_t stringLength)
 {
-	size_t stringLength = strlen(string);
 	wstring wstr; wstr.reserve(stringLength);
 	mbstowcs(&wstr[0], string, strlen(string));
 
 	return wstr;
 }
+
+#define STRING_TO_WSTRING(str, name)\
+wstr ##name = stringToWString(str, strlen(str));
 
 #ifndef CONTAINER_BYTES
 #define CONTAINER_BYTES(container) (sizeof(container[0]) * container.size())

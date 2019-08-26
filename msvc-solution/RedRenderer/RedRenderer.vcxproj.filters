@@ -42,9 +42,6 @@
     <ClCompile Include="..\..\core\glfw.cpp">
       <Filter>RR_COMMON</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\core\graphics.cpp">
-      <Filter>RR_COMMON</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\core\new.cpp">
       <Filter>RR_COMMON</Filter>
     </ClCompile>
@@ -185,12 +182,6 @@
     <ClInclude Include="..\..\external\glfw\src\internal.h">
       <Filter>GLFW</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\core\D3D11\d3d.h">
-      <Filter>RR_D3D11</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\core\D3D12\d3d.h">
-      <Filter>RR_D3D12</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\core\D3D12\d3dx12.h">
       <Filter>RR_D3D12</Filter>
     </ClInclude>
@@ -202,6 +193,15 @@
     </ClInclude>
     <ClInclude Include="..\..\core\VK\vulkan.h">
       <Filter>RR_VULKAN</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\D3D11\d3d11.h">
+      <Filter>RR_D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\D3D12\d3d12.h">
+      <Filter>RR_D3D12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\d3d.h">
+      <Filter>RR_COMMON</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -216,5 +216,13 @@
     <CustomBuild Include="..\..\shaders\triangle.frag.glsl">
       <Filter>Shaders</Filter>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\shaders\box.pixel.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\shaders\box.vert.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

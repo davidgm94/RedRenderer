@@ -139,8 +139,8 @@ struct VulkanApplication
 	VkShaderModule FS;
 	VkShaderModule VS;
 	VkDescriptorSetLayout descriptorSetLayout;
-	VkPipelineLayout pipelineLayout;
-	VkPipeline pipeline;
+	VkPipelineLayout graphicsPipelineLayout;
+	VkPipeline graphicsPipeline;
 	VulkanTexture texture;
 	Mesh mesh;
 	VulkanBuffer vertexBuffer;
@@ -1074,11 +1074,11 @@ void vulkan_transitionImageLayout(VkDevice device, VkCommandPool commandPool, Vk
 	vulkan_endSingleTimeCommands(device, commandPool, transferCommandBuffer, queue);
 }
 
-VulkanMSAA vulkan_createMultisamplingBuffer(VkDevice device, VkCommandPool commandPool, VkQueue queue, const VkPhysicalDeviceProperties& physicalDeviceProperties, const VkPhysicalDeviceMemoryProperties& physicalDeviceMemoryProperties, VkFormat swapchainImageFormat, VkExtent2D swapchainExtent, u32 mipLevels)
+VulkanMSAA vulkan_createMultisamplingBuffer(VkDevice device, VkCommandPool commandPool, VkQueue queue, const VkPhysicalDeviceProperties& physicalDeviceProperties, const VkPhysicalDeviceMemoryProperties& physicalDeviceMemoryProperties, VkFormat swapchainImageFormat, const VkExtent2D& swapchainExtent, u32 mipLevels)
 {
 	VulkanMSAA msaa;
 	msaa.samples = vulkan_pickSampleCount(physicalDeviceProperties);
-	msaa.image = vulkan_createImage(device, { swapchainExtent.width, swapchainExtent.width, 1}, mipLevels, msaa.samples, swapchainImageFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
+	msaa.image = vulkan_createImage(device, { swapchainExtent.width, swapchainExtent.height, 1}, mipLevels, msaa.samples, swapchainImageFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
 	msaa.memory = vulkan_allocateMemoryForImage(device, msaa.image, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, physicalDeviceMemoryProperties);
 	msaa.view = vulkan_createImageView(device, msaa.image, swapchainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT, 1);
 
@@ -1109,7 +1109,7 @@ VkShaderModule vulkan_createShaderModule(VkDevice device, const char* path)
 	createInfo.pNext = nullptr;
 	createInfo.flags = 0;
 	createInfo.codeSize = length; // note: this needs to be a number of bytes!
-	createInfo.pCode = reinterpret_cast<const uint32_t*>(buffer.c_str());
+	createInfo.pCode = reinterpret_cast<const u32*>(buffer.c_str());
 
 	VkShaderModule shaderModule = nullptr;
 	VKCHECK(vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule));
@@ -1301,7 +1301,6 @@ static inline VkPipelineShaderStageCreateInfo vulkan_createShaderPipelineStage(V
 	return createInfo;
 }
 
-
 VkPipeline vulkan_createGraphicsPipeline(VkDevice device, VkShaderModule vertexShader, VkShaderModule fragmentShader, const VkExtent2D& swapchainExtent, VkPipelineLayout pipelineLayout, VkRenderPass renderPass, VkSampleCountFlagBits sampleCount)
 {
 	VkPipelineShaderStageCreateInfo vertexShaderStage = vulkan_createShaderPipelineStage(vertexShader, VK_SHADER_STAGE_VERTEX_BIT);
@@ -1338,7 +1337,8 @@ VkPipeline vulkan_createGraphicsPipeline(VkDevice device, VkShaderModule vertexS
 	VkRect2D scissor;
 	scissor.offset.x = 0;
 	scissor.offset.y = 0;
-	scissor.extent = swapchainExtent;
+	scissor.extent.width = swapchainExtent.width;
+	scissor.extent.height = swapchainExtent.height;
 
 	VkPipelineViewportStateCreateInfo viewportState;
 	viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -1459,25 +1459,6 @@ VkPipeline vulkan_createGraphicsPipeline(VkDevice device, VkShaderModule vertexS
 	return graphicsPipeline;
 }
 
-// Not used, maybe use if run into trouble with the new one
-/*
-DepthBuffer createDepthBuffer(VkPhysicalDevice physicalDevice, VkDevice device, VkCommandPool commandPool, VkQueue queue, const VkExtent2D& swapchainExtent, const VkPhysicalDeviceMemoryProperties& memoryProperties, VkSampleCountFlagBits samples)
-{
-#define DEPTH_BUFFER_MIP_LEVELS 1
-	DepthBuffer depthBuffer;
-	depthBuffer.format = findDepthFormat(physicalDevice);
-
-	depthBuffer.image = vulkan_createImage(device, { swapchainExtent.width, swapchainExtent.height, 1 }, DEPTH_BUFFER_MIP_LEVELS, samples, depthBuffer.format, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
-	depthBuffer.memory = vulkan_allocateMemoryForImage(device, depthBuffer.image, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, memoryProperties);
-	depthBuffer.view = vulkan_createImageView(device, depthBuffer.image, depthBuffer.format, VK_IMAGE_ASPECT_DEPTH_BIT, DEPTH_BUFFER_MIP_LEVELS);
-
-	vulkan_transitionImageLayout(device, commandPool, queue, depthBuffer.image, depthBuffer.format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, DEPTH_BUFFER_MIP_LEVELS);
-
-#undef DEPTH_BUFFER_MIP_LEVELS
-	return depthBuffer;
-}
-*/
-
 VulkanDepthStencil vulkan_createDepthStencil(VkDevice device, VkPhysicalDevice physicalDevice, VkExtent2D const& extent, VkPhysicalDeviceMemoryProperties const& memoryProperties)
 {
 	VulkanDepthStencil depthStencil;
@@ -1594,7 +1575,6 @@ vector<VkFramebuffer> vulkan_createFramebuffers(VkDevice device, const vector<Vk
 
 vector<VkCommandBuffer> vulkan_createCommandBuffers(VkDevice device, VkCommandPool commandPool, u32 swapchainImageCount)
 {
-
 	VkCommandBufferAllocateInfo allocateInfo;
 	allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 	allocateInfo.pNext = nullptr;
@@ -1608,7 +1588,7 @@ vector<VkCommandBuffer> vulkan_createCommandBuffers(VkDevice device, VkCommandPo
 	return commandBuffers;
 }
 
-static inline void vulkan_copyBufferToImage(VkDevice device, VkCommandPool commandPool, VkQueue queue, VkImage dstImage, VkBuffer srcBuffer, VkExtent3D imageExtent)
+static inline void vulkan_copyBufferToImage(VkDevice device, VkCommandPool commandPool, VkQueue queue, VkImage dstImage, VkBuffer srcBuffer, VkExtent2D imageExtent)
 {
 	VkCommandBuffer transferCommandBuffer = vulkan_beginSingleTimeCommands(device, commandPool);
 
@@ -1621,7 +1601,9 @@ static inline void vulkan_copyBufferToImage(VkDevice device, VkCommandPool comma
 	region.imageSubresource.baseArrayLayer = 0;
 	region.imageSubresource.layerCount = 1;
 	region.imageOffset = { 0, 0, 0 };
-	region.imageExtent = imageExtent;
+	region.imageExtent.width = imageExtent.width;
+	region.imageExtent.height = imageExtent.height;
+	region.imageExtent.depth = 1;
 
 	vkCmdCopyBufferToImage(transferCommandBuffer, srcBuffer, dstImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 
@@ -1849,7 +1831,16 @@ VulkanBufferList vulkan_createUniformBuffers(VkDevice device, VkDeviceSize swapc
 void vulkan_updateUniformBuffer(VkDevice device, const VkExtent2D& swapchainExtent, VkDeviceMemory uboMemory, float t)
 {
 	UniformBufferObject ubo;
-	ubo.model = glm::rotate(glm::mat4(1.0f), t * glm::radians(90.f), glm::vec3(0.0f, 0.0f, 1.0f));
+	ubo.model = glm::mat4(1.0f);
+	ubo.view = glm::mat4(1.0f);
+	ubo.proj = glm::mat4(1.0f);
+	
+	ubo.model = glm::scale(ubo.model, glm::vec3(4.5f, 4.5f, 4.5f));
+	ubo.model = glm::rotate(ubo.model, glm::radians(135.f), glm::vec3(0.0f, 0.0f, 1.0f));
+	ubo.model = glm::rotate(ubo.model, glm::radians(65.f), glm::vec3(1.0f, 0.0f, 0.0f));
+	ubo.model = glm::rotate(ubo.model, glm::radians(45.f), glm::vec3(0.0f, 1.0f, 0.0f));
+	//glm::mat4 rot = glm::rotate(glm::mat4(1.0f), t * glm::radians(90.f), glm::vec3(0.0f, 0.0f, 1.0f));
+	//ubo.model = rot * ubo.model;
 	ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 	ubo.proj = glm::perspective(glm::radians(45.f), (float)swapchainExtent.width / (float)swapchainExtent.height, 0.1f, 10.0f);
 	// Invert to prevent image to be rendered upside down
@@ -1867,14 +1858,14 @@ VulkanTexture vulkan_loadTexture(const char* texturePath, VkPhysicalDevice physi
 	stbi_uc* texturePixels = stbi_load(texturePath, &textureWidth, &textureHeight, &textureChannels, STBI_rgb_alpha);
 	assert(texturePixels);
 	VkDeviceSize textureSize = (u64)textureWidth * (u64)textureHeight * 4;
-	VkExtent3D textureExtent = { (u32)textureWidth, (u32)textureHeight, 1 };
+	VkExtent2D textureExtent = { (u32)textureWidth, (u32)textureHeight};
 
 	VulkanBuffer stagingBuffer = vulkan_createStagingBuffer(device, texturePixels, textureSize, queueInfo, memoryProperties);
 	stbi_image_free(texturePixels);
 
 	VulkanTexture texture;
 	texture.mipLevels = u32(floor(log2(max(textureWidth, textureHeight)))) + 1;
-	texture.handle = vulkan_createImage(device, textureExtent, texture.mipLevels, samples, textureFormat, tilingMode, imageUsage);
+	texture.handle = vulkan_createImage(device, { textureExtent.width, textureExtent.height, 1 }, texture.mipLevels, samples, textureFormat, tilingMode, imageUsage);
 	texture.memory = vulkan_allocateMemoryForImage(device, texture.handle, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, memoryProperties);
 
 	vulkan_transitionImageLayout(device, commandPool, queue, texture.handle, textureFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, texture.mipLevels);
@@ -1987,7 +1978,8 @@ void vulkan_buildCommandBuffers(VkRenderPass renderPass, const VkExtent2D& swapc
 	renderPassInfo.renderPass = renderPass;
 	renderPassInfo.renderArea.offset.x = 0;
 	renderPassInfo.renderArea.offset.y = 0;
-	renderPassInfo.renderArea.extent = swapchainExtent;
+	renderPassInfo.renderArea.extent.width = swapchainExtent.width;
+	renderPassInfo.renderArea.extent.height = swapchainExtent.height;
 	renderPassInfo.clearValueCount = u32(clearValues.size());
 	renderPassInfo.pClearValues = clearValues.data();
 
@@ -2083,25 +2075,24 @@ VkResult vulkan_present(VkDevice device, VkSwapchainKHR swapchain, u32 currentFr
 	return vkQueuePresentKHR(graphicsQueue, &presentInfo);
 }
 
-SwapchainStatus vulkan_updateSwapchain(VulkanSwapchain* pSwapchain, VkDevice device, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, u32 newWidth, u32 newHeight)
+SwapchainStatus vulkan_updateSwapchain(VulkanSwapchain& swapchain, VkDevice device, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface)
 {
-	/*
 	VkSurfaceCapabilitiesKHR surfaceCapabilities;
 	VKCHECK(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &surfaceCapabilities));
 	u32 newWidth = surfaceCapabilities.currentExtent.width;
 	u32 newHeight = surfaceCapabilities.currentExtent.height;
-	*/	
 
 	if (newWidth == 0 || newHeight == 0)
 	{
 		return SwapchainStatus::NOT_READY;
 	}
-	if (pSwapchain->extent.width == newWidth && pSwapchain->extent.height == newHeight)
+	if (swapchain.extent.width == newWidth && swapchain.extent.height == newHeight)
 	{
 		return SwapchainStatus::READY;
 	}
 	
-	*pSwapchain = vulkan_createSwapchain(physicalDevice, device, surface, newWidth, newHeight, pSwapchain);
+	VKCHECK(vkDeviceWaitIdle(device));
+	swapchain = vulkan_createSwapchain(physicalDevice, device, surface, newWidth, newHeight, &swapchain);
 
 	return SwapchainStatus::RESIZED;
 }
@@ -2120,7 +2111,7 @@ void vulkan_onWindowResize(VulkanApplication* vk)
 	
 	vkDestroyRenderPass(vk->device, vk->renderPass, nullptr);
 	vk->renderPass = vulkan_createRenderPass(vk->device, vk->swapchain.surfaceFormat.format, vk->depthStencil.depthFormat, vk->msaa.samples);
-	for (VkFramebuffer& framebuffer : vk->framebuffers)
+	for (VkFramebuffer framebuffer : vk->framebuffers)
 	{
 		vkDestroyFramebuffer(vk->device, framebuffer, nullptr);
 	}
@@ -2128,11 +2119,98 @@ void vulkan_onWindowResize(VulkanApplication* vk)
 	
 	vkFreeCommandBuffers(vk->device, vk->graphicsCommandPool, u32(vk->drawCommandBuffers.size()), vk->drawCommandBuffers.data());
 	vk->drawCommandBuffers = vulkan_createCommandBuffers(vk->device, vk->graphicsCommandPool, u32(vk->swapchain.images.size()));
-	vkDestroyPipelineLayout(vk->device, vk->pipelineLayout, nullptr);
-	vk->pipelineLayout = vulkan_createPipelineLayout(vk->device, &vk->descriptorSetLayout);
-	vkDestroyPipeline(vk->device, vk->pipeline, nullptr);
-	vk->pipeline = vulkan_createGraphicsPipeline(vk->device, vk->VS, vk->FS, vk->swapchain.extent, vk->pipelineLayout, vk->renderPass, vk->msaa.samples);
+	vkDestroyPipelineLayout(vk->device, vk->graphicsPipelineLayout, nullptr);
+	vk->graphicsPipelineLayout = vulkan_createPipelineLayout(vk->device, &vk->descriptorSetLayout);
+	vkDestroyPipeline(vk->device, vk->graphicsPipeline, nullptr);
+	vk->graphicsPipeline = vulkan_createGraphicsPipeline(vk->device, vk->VS, vk->FS, vk->swapchain.extent, vk->graphicsPipelineLayout, vk->renderPass, vk->msaa.samples);
+	for (VkBuffer uniformBuffer: vk->uniformBuffers.handle)
+	{
+		vkDestroyBuffer(vk->device, uniformBuffer, nullptr);
+	}
+	for (VkDeviceMemory ubMemory: vk->uniformBuffers.memory)
+	{
+		vkFreeMemory(vk->device, ubMemory, nullptr);
+	}
+	vk->uniformBuffers = vulkan_createUniformBuffers(vk->device, vk->swapchain.images.size(), { nullptr, 0, VK_SHARING_MODE_EXCLUSIVE }, vk->deviceDescription.memoryProperties);
 	vkFreeDescriptorSets(vk->device, vk->descriptorPool, u32(vk->descriptorSets.size()), vk->descriptorSets.data());
 	vk->descriptorSets = vulkan_createDescriptorSets(vk->device, vk->descriptorPool, u32(vk->swapchain.images.size()), vk->descriptorSetLayout, vk->uniformBuffers, vk->texture.view, vk->texture.sampler);
-	vulkan_buildCommandBuffers(vk->renderPass, vk->swapchain.extent, vk->drawCommandBuffers, vk->framebuffers, vk->vertexBuffer.handle, vk->indexBuffer.handle, vk->pipeline, vk->pipelineLayout, vk->mesh.vertices, vk->mesh.indices, vk->descriptorSets);
+	vulkan_buildCommandBuffers(vk->renderPass, vk->swapchain.extent, vk->drawCommandBuffers, vk->framebuffers, vk->vertexBuffer.handle, vk->indexBuffer.handle, vk->graphicsPipeline, vk->graphicsPipelineLayout, vk->mesh.vertices, vk->mesh.indices, vk->descriptorSets);
+}
+
+void destroyVulkanApplication(VulkanApplication& vk)
+{
+	VKCHECK(vkDeviceWaitIdle(vk.device));
+
+	vkDestroyImage(vk.device, vk.msaa.image, nullptr);
+	vkDestroyImageView(vk.device, vk.msaa.view, nullptr);
+	vkFreeMemory(vk.device, vk.msaa.memory, nullptr);
+
+	vkDestroyImageView(vk.device, vk.depthStencil.imageView, nullptr);
+	vkDestroyImage(vk.device, vk.depthStencil.image, nullptr);
+	vkFreeMemory(vk.device, vk.depthStencil.memory, nullptr);
+
+	vkDestroyRenderPass(vk.device, vk.renderPass, nullptr);
+	for (VkFramebuffer framebuffer : vk.framebuffers)
+	{
+		vkDestroyFramebuffer(vk.device, framebuffer, nullptr);
+	}
+
+	vkFreeCommandBuffers(vk.device, vk.graphicsCommandPool, u32(vk.drawCommandBuffers.size()), vk.drawCommandBuffers.data());
+	vkDestroyPipelineLayout(vk.device, vk.graphicsPipelineLayout, nullptr);
+	vkDestroyPipeline(vk.device, vk.graphicsPipeline, nullptr);
+	vkFreeDescriptorSets(vk.device, vk.descriptorPool, u32(vk.descriptorSets.size()), vk.descriptorSets.data());
+	vkDestroyDescriptorPool(vk.device, vk.descriptorPool, nullptr);
+	vkDestroyCommandPool(vk.device, vk.graphicsCommandPool, nullptr);
+
+	for (VkSemaphore semaphore : vk.frameSync.imageAcquireSemaphores)
+	{
+		vkDestroySemaphore(vk.device, semaphore, nullptr);
+	}
+	for (VkSemaphore semaphore : vk.frameSync.imageReleaseSemaphores)
+	{
+		vkDestroySemaphore(vk.device, semaphore, nullptr);
+	}
+	for (VkFence fence: vk.frameSync.inflightFences)
+	{
+		vkDestroyFence(vk.device, fence, nullptr);
+	}
+	for (VkFence fence : vk.waitFences)
+	{
+		vkDestroyFence(vk.device, fence, nullptr);
+	}
+	
+	vkDestroyShaderModule(vk.device, vk.VS, nullptr);
+	vkDestroyShaderModule(vk.device, vk.FS, nullptr);
+
+	vkDestroyImage(vk.device, vk.texture.handle, nullptr);
+	vkDestroyImageView(vk.device, vk.texture.view, nullptr);
+	vkDestroySampler(vk.device, vk.texture.sampler, nullptr);
+	vkFreeMemory(vk.device, vk.texture.memory, nullptr);
+
+	vkDestroyBuffer(vk.device, vk.vertexBuffer.handle, nullptr);
+	vkFreeMemory(vk.device, vk.vertexBuffer.memory, nullptr);
+	vkDestroyBuffer(vk.device, vk.indexBuffer.handle, nullptr);
+	vkFreeMemory(vk.device, vk.indexBuffer.memory, nullptr);
+
+	for (VkDeviceMemory memory : vk.uniformBuffers.memory)
+	{
+		vkFreeMemory(vk.device, memory, nullptr);
+	}
+	for (VkBuffer buffer : vk.uniformBuffers.handle)
+	{
+		vkDestroyBuffer(vk.device, buffer, nullptr);
+	}
+
+	vkDestroyDescriptorSetLayout(vk.device, vk.descriptorSetLayout, nullptr);
+
+	for (VkImageView swapchainImageView: vk.swapchain.imageViews)
+	{
+		vkDestroyImageView(vk.device, swapchainImageView, nullptr);
+	}
+
+	vkDestroySwapchainKHR(vk.device, vk.swapchain.handle, nullptr);
+	vkDestroySurfaceKHR(vk.instance, vk.surface, nullptr);
+	vkDestroyDevice(vk.device, nullptr);
+	vkDestroyDebugReportCallbackEXT(vk.instance, vk.debugCallback, nullptr);
+	vkDestroyInstance(vk.instance, nullptr);
 }
