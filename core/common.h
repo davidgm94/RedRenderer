@@ -13,6 +13,21 @@ using i32 = int32_t;
 using i64 = int64_t;
 using bool32 = i32;
 
+// Memory
+#define BYTE_SIZE 1Ui64
+#define KILOBYTE (1024 * BYTE_SIZE)
+#define MEGABYTE (1024 * KILOBYTE)
+#define GIGABYTE (1024 * MEGABYTE)
+
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+
+void* __cdecl operator new(size_t size);
+void* __cdecl operator new[](size_t size);
+void* __cdecl operator new[](size_t size, const char* name, int flags, unsigned debugFlags, const char* file, int line);
+void* __cdecl operator new[](size_t size, size_t alignment, size_t alignmentOffset, const char* name, int flags, unsigned debugFlags, const char* file, int line);
+
+
 #define USING_EASTL
 #ifdef USING_EASTL
 #include <EAStdC/EASprintf.h>

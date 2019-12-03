@@ -1,3 +1,4 @@
+/*
 #include "common.h"
 #ifdef USING_EASTL
 #include <malloc.h>
@@ -25,3 +26,4 @@ void* __cdecl operator new[](size_t size, size_t alignment, size_t alignmentOffs
 #endif
 }
 #endif
+*/

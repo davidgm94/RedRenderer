@@ -150,6 +150,9 @@
     <ClCompile Include="..\..\core\model.cpp">
       <Filter>RR_COMMON</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\core\red_allocator.cpp">
+      <Filter>RR_COMMON</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="OPENGL\opengl.h">
@@ -201,6 +204,9 @@
       <Filter>RR_D3D12</Filter>
     </ClInclude>
     <ClInclude Include="..\..\core\d3d.h">
+      <Filter>RR_COMMON</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\red_math.h">
       <Filter>RR_COMMON</Filter>
     </ClInclude>
   </ItemGroup>

@@ -14,7 +14,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{BBA29D27-DCDA-4C09-904B-D83AD10EFFA8}</ProjectGuid>
     <RootNamespace>RedRenderer</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -79,6 +79,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\core\red_allocator.cpp" />
     <ClCompile Include="..\..\core\glfw.cpp" />
     <ClCompile Include="..\..\core\otherAPIsTemp.cpp" />
     <ClCompile Include="..\..\core\win32_redrenderer.cpp" />
@@ -125,6 +126,7 @@
     <ClInclude Include="..\..\core\D3D12\d3dx12.h" />
     <ClInclude Include="..\..\core\glfw.h" />
     <ClInclude Include="..\..\core\glm.h" />
+    <ClInclude Include="..\..\core\red_math.h" />
     <ClInclude Include="..\..\core\model.h" />
     <ClInclude Include="..\..\core\VK\vulkan.h" />
     <ClInclude Include="..\..\core\win32.h" />
